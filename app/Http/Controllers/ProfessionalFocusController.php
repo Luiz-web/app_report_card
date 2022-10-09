@@ -25,7 +25,7 @@ class ProfessionalFocusController extends Controller
         $professionalFocusRepository = new ProfessionalFocusRepository($this->professionalFocus);
 
         if($request->has('relational_attrs')) {
-            $relational_attrs = 'schoolYear:id,'.$request->relational_attrs;
+            $relational_attrs = 'students:id,'.$request->relational_attrs;
             $professionalFocusRepository->selectRelationalAttributes($relational_attrs);
         }
 
@@ -113,7 +113,7 @@ class ProfessionalFocusController extends Controller
         $professionalFocus->fill($request->all());
         $professionalFocus->save();
 
-        return reponse()->json($professionalFocus, 200);
+        return response()->json($professionalFocus, 200);
     }
     
 
@@ -132,6 +132,6 @@ class ProfessionalFocusController extends Controller
         }
 
         $professionalFocus->delete();
-        return response()->json(['msg' => 'The professional area '.$professionalFocus->professional_area. ' gas been successfully deleted in the database'], 200);
+        return response()->json(['msg' => 'The professional area '.$professionalFocus->professional_area. ' has been successfully deleted in the database'], 200);
     }
 }

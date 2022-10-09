@@ -10,4 +10,8 @@ class ProfessionalFocus extends Model
     use HasFactory;
     protected $table = 'professional_focus';
     protected $fillable = ['professional_area'];
+
+    public function students() {
+        return $this->hasMany('App\Models\Student', 'id_professional_focus');
+    }
 }

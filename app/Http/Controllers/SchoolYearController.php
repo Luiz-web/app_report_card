@@ -8,6 +8,11 @@ use App\Http\Requests\UpdateSchoolYearRequest;
 
 class SchoolYearController extends Controller
 {
+    public function __construct(SchoolYear $schoolYear) {
+        $this->schoolYear = $schoolYear;
+        $msgError = 'The researched school year area does not exist in the database';
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +20,24 @@ class SchoolYearController extends Controller
      */
     public function index()
     {
-        //
+        $schoolYearRepository = new schoolYearRepository($this->schoolYear);
+
+        if($request->has('relational_attrs')) {
+            $relational_attrs = 'students:id,'.$request->relational_attrs;
+            $schoolYearRepository->selectRelationalAttributes($relational_attrs);
+        }
+
+        if($request->has('filters')) {
+            $filters = $request->filters;
+            $schoolYearRepository->filter($filters);
+        }
+
+        if($request->has('attrs')) {
+            $attrs = $request->attrs;
+            $schoolYearRepository->selectAttributes($attrs);
+        }
+
+        return response()->json($schoolYearRepository->getResult(), 200);
     }
 
     /**
@@ -36,18 +58,28 @@ class SchoolYearController extends Controller
      */
     public function store(StoreSchoolYearRequest $request)
     {
-        //
+        $schoolYear = $this->schoolYear->create([
+            'school_year' => $request->school_year,
+        ]);
+
+        return response()->json($schoolYear, 200);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\SchoolYear  $schoolYear
+     * @param  \Integer
      * @return \Illuminate\Http\Response
      */
-    public function show(SchoolYear $schoolYear)
+    public function show($id)
     {
-        //
+        $schoolYear = $this->schoolYear->find($id);
+
+        if($schoolYear === null) {
+            return response()->json(['error' => 'Unable to show data. '.$this->msgErro], 404);
+        }
+
+        return response()->json($schoolYear, 201);
     }
 
     /**
@@ -65,22 +97,38 @@ class SchoolYearController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\UpdateSchoolYearRequest  $request
-     * @param  \App\Models\SchoolYear  $schoolYear
+     * @param  Integer
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateSchoolYearRequest $request, SchoolYear $schoolYear)
+    public function update(UpdateSchoolYearRequest $request, $id)
     {
-        //
+        $schoolYear = $this->schoolYear->find($id);
+
+        if($schoolYear === null) {
+            return response()->json(['error' => 'Unable to update data. '.$this->msgErro], 404);
+        }
+
+        $schoolYear->fill($request->all());
+        $schoolYear->save();
+
+        return response()->json($schoolYear, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\SchoolYear  $schoolYear
+     * @param  Integer
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SchoolYear $schoolYear)
+    public function destroy($id)
     {
-        //
+        $schoolYear = $this->schoolYear->find($id);
+
+        if($schoolYear === null) {
+            return response()->json(['error' => 'Unable to delete data. '.$this->msgErro], 404);
+        }
+
+        $schoolYear->delete();
+        return response()->json(['msg' => 'The School year '.$schoolYear->school_year. ' has been successfully removed from the database'], 200);
     }
 }

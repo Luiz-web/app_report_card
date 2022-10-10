@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProfessionalFocus extends Model
 {
     use HasFactory;
-    protected $table = 'professional_focus';
+    protected $table = 'professional_focus'; // Appropriately renaming the table
     protected $fillable = ['professional_area'];
 
     public function students() {

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Student extends Model
 {
     use HasFactory;
-    protected $fillable = ['id_school_year', 'id_professional_focus', 'name', 'age', 'first_score', 'second_score'];
+    protected $fillable = ['id_school_year', 'id_professional_focus', 'age', 'name', 'first_score', 'second_score'];
 
     public function schoolYear() {
         return $this->belongsTo('App\Models\SchoolYear', 'id_school_year');
@@ -16,5 +16,9 @@ class Student extends Model
 
     public function professionalFocus() {
         return $this->belongsTo('App\Models\ProfessionalFocus', 'id_professional_focus');
+    }
+
+    public function studentStatus() {
+        return $this->belongsTo('App\Models\StudentStatus', 'id_student');
     }
 }

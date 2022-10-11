@@ -42,6 +42,7 @@ class CreateStudentsTable extends Migration
             $table->dropForeign('students_id_school_year_foreign');
             $table->dropColumn('id_professional_focus');
             $table->dropColumn('id_school_year');
+            
         });
 
         Schema::dropIfExists('students');

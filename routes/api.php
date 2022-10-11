@@ -21,3 +21,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::apiResource('student', 'App\Http\Controllers\StudentController');
 Route::apiResource('school-year', 'App\Http\Controllers\SchoolYearController');
 Route::apiResource('professional-focus', 'App\Http\Controllers\ProfessionalFocusController');
+Route::apiResource('situation', 'App\Http\Controllers\SituationController');

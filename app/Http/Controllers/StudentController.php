@@ -65,8 +65,8 @@ class StudentController extends Controller
     public function store(StoreStudentRequest $request)
     {
         $student = $this->student->create([
-            'id_school_year' => $request->id_school_year,
-            'id_professional_focus' => $request->id_professional_focus,
+            'school_year_id' => $request->school_year_id,
+            'professional_focus_id' => $request->professional_focus_id,
             'name' => $request->name,
             'age' => $request->age,
             'first_score' => $request->first_score,

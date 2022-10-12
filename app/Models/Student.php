@@ -11,11 +11,11 @@ class Student extends Model
     protected $fillable = ['school_year_id', 'professional_focus_id', 'name', 'age', 'first_score', 'second_score'];
 
     public function schoolYear() {
-        return $this->belongsTo('App\Models\SchoolYear', 'id_school_year');
+        return $this->belongsTo('App\Models\SchoolYear', 'school_year_id');
     }
 
     public function professionalFocus() {
-        return $this->belongsTo('App\Models\ProfessionalFocus', 'id_professional_focus');
+        return $this->belongsTo('App\Models\ProfessionalFocus', 'professional_focus_id');
     }
 
     public function situation() {

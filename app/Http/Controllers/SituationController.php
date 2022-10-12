@@ -65,6 +65,7 @@ class SituationController extends Controller
         $student_id = $request->student_id;
         $student = $this->student->find($student_id);
 
+        $name = $student->name;
         $first_score = $student->first_score;
         $second_score = $student->second_score;
         $total_score = $first_score + $second_score;
@@ -79,6 +80,7 @@ class SituationController extends Controller
             'student_id' => $student_id,
             'total_score' => $total_score,
             'status' => $status,
+            'name' => $name
         ]);
 
         return response()->json($situation, 200);
@@ -149,6 +151,6 @@ class SituationController extends Controller
         }
 
         $situation->delete();
-        return response()->json(['msg' => 'The status referred to the student '.$situation->student->name. ' has been successfully deleted in the database'], 200);
+        return response()->json(['msg' => 'The status referred to the student '.$situation->name. ' has been successfully deleted in the database'], 200);
     }
 }

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\SchoolYear;
+use App\Repositories\SchoolYearRepository;
 use App\Http\Requests\StoreSchoolYearRequest;
 use App\Http\Requests\UpdateSchoolYearRequest;
+use Illuminate\Http\Request;
 
 class SchoolYearController extends Controller
 {
@@ -18,7 +20,7 @@ class SchoolYearController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $schoolYearRepository = new schoolYearRepository($this->schoolYear);
 

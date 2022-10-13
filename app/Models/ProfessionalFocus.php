@@ -12,6 +12,6 @@ class ProfessionalFocus extends Model
     protected $fillable = ['professional_area'];
 
     public function students() {
-        return $this->hasMany('App\Models\Student', 'id_professional_focus');
+        return $this->hasMany('App\Models\Student');
     }
 }

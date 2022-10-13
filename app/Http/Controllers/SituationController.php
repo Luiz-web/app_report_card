@@ -145,12 +145,12 @@ class SituationController extends Controller
     public function destroy($id)
     {
         $situation = $this->situation->find($id);
-        
+                
         if($situation === null) {
             return response()->json(['error' => 'Unable to delete data. '.$this->msgError], 404);
         }
 
         $situation->delete();
-        return response()->json(['msg' => 'The status referred to the student '.$situation->name. ' has been successfully deleted in the database'], 200);
+        return response()->json(['msg' => 'The status referred to the student '.$situation->student->name. ' has been successfully deleted in the database'], 200);
     }
 }

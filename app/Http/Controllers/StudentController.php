@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use Illuminate\Http\Request;
@@ -135,13 +136,13 @@ class StudentController extends Controller
     public function destroy($id)
     {
         $student = $this->student->find($id);
-
+     
         if($student === null) {
-            return response()->json(['error' => 'Unable to delete data. '.$this->msgError], 404);
-        }
+             return response()->json(['error' => 'Unable to delete data. '.$this->msgError], 404);
+         }
 
-        $student->delete();
-        return response()->json(['msg' => "The data referred to the student $student->name  has been successfully deleted from the database"], 200);
+         $student->delete();
+         return response()->json(['msg' => "The data referred to the student $student->name  has been successfully deleted from the database"], 200);
         
     }
 }

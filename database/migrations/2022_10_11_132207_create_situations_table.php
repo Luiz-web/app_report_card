@@ -34,7 +34,7 @@ class CreateSituationsTable extends Migration
     {
         Schema::table('situations', function (Blueprint $table) {
             $table->dropForeign('situations_student_id_foreign');
-            $table->dropColumn('id_student');
+            $table->dropColumn('student_id');
         });
 
         Schema::dropIfExists('situations');

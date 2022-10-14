@@ -10,7 +10,7 @@ class Situation extends Model
     use HasFactory;
     protected $fillable = ['student_id', 'total_score', 'status', 'name'];
 
-    public function student() {
+    public function students() {
         return $this->belongsTo('App\Models\Student','student_id');
     }
 }

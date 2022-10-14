@@ -65,6 +65,8 @@ class StudentController extends Controller
      */
     public function store(StoreStudentRequest $request)
     {
+        $request->validate($this->student->rules());
+        
         $student = $this->student->create([
             'school_year_id' => $request->school_year_id,
             'professional_focus_id' => $request->professional_focus_id,
@@ -119,6 +121,22 @@ class StudentController extends Controller
 
         if($student === null) {
             return response()->json(['error' => 'Unable to update data. '.$this->msgError, 404]);
+        }
+
+        if($request->method() === 'PATCH') {
+
+            $dinamicRules = array();
+
+            foreach($student->rules as $input => $rule) {
+
+                if(array_key_exists($input, $request->all())) {
+                    $dinamicRules[$input] = $rule;
+                }
+            }
+
+            $request->validate($dinamicRules);
+        } else {
+            $request->validate($student->rules());
         }
 
         $student->fill($request->all());

@@ -62,6 +62,9 @@ class SituationController extends Controller
      */
     public function store(StoreSituationRequest $request)
     {
+
+        $request->validate($this->situation->rules());
+        
         $student_id = $request->student_id;
         $student = $this->student->find($student_id);
 
@@ -128,6 +131,8 @@ class SituationController extends Controller
         if($situation === null) {
             return response()->json(['error' => 'Unable to update data. '.$this->msgError], 404);
         }
+
+        $request->validate($situation->rules());
         
         $situation->fill($request->all());
         $situation->total_score = (double) $situation->total_score;

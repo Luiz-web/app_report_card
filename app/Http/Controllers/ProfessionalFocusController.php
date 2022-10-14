@@ -60,6 +60,8 @@ class ProfessionalFocusController extends Controller
      */
     public function store(StoreProfessionalFocusRequest $request)
     {
+        $request->validate($this->professionalFocus->rules());
+
         $professionalFocus = $this->professionalFocus->create([
             'professional_area' => $request->professional_area,
         ]);
@@ -109,6 +111,8 @@ class ProfessionalFocusController extends Controller
         if($professionalFocus === null) {
             return response()->json(['error' => 'Unable to update data. '.$this->msgErro], 404);
         }
+
+        $request->validate($this->professionalFocus->rules());
 
         $professionalFocus->fill($request->all());
         $professionalFocus->save();

@@ -11,6 +11,12 @@ class ProfessionalFocus extends Model
     protected $table = 'professional_focus'; // Appropriately renaming the table
     protected $fillable = ['professional_area'];
 
+    public function rules() {
+        return [
+            'professional_area' => 'required|unique:professional_focus,professional_area,'.$this->id.'min:2|max:30',
+        ];
+    }
+
     public function students() {
         return $this->hasMany('App\Models\Student');
     }

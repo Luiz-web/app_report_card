@@ -60,6 +60,8 @@ class SchoolYearController extends Controller
      */
     public function store(StoreSchoolYearRequest $request)
     {
+        $request->validate($this->schoolYear->rules());
+       
         $schoolYear = $this->schoolYear->create([
             'school_year' => $request->school_year,
         ]);
@@ -109,6 +111,8 @@ class SchoolYearController extends Controller
         if($schoolYear === null) {
             return response()->json(['error' => 'Unable to update data. '.$this->msgErro], 404);
         }
+
+        $request->validate($this->schoolYear->rules());
 
         $schoolYear->fill($request->all());
         $schoolYear->save();

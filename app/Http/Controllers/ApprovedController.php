@@ -38,7 +38,7 @@ class ApprovedController extends Controller
      * @param  \App\Http\Requests\StoreApprovedRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreApprovedRequest $request)
+    public function store()
     {
         $approved_id = [];
         $situations_id = [];
@@ -115,7 +115,7 @@ class ApprovedController extends Controller
      */
     public function update(UpdateApprovedRequest $request, Approved $approved)
     {
-        //
+        return response()->json(['error', 'the update method is prohibited'], 403);
     }
 
     /**
@@ -126,6 +126,6 @@ class ApprovedController extends Controller
      */
     public function destroy(Approved $approved)
     {
-        //
+        return response()->json(['error', 'the delete  method is prohibited'], 403);
     }
 }

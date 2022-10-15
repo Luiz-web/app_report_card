@@ -17,9 +17,7 @@ class AuthController extends Controller
         } else { // error with email or password
             return response()->json(['error' => 'email or password invalid'], 403);
         }
-        
         //return one token jwt
-        return 'login';
     }
 
     public function logout() {

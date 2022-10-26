@@ -5,16 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Situation;
 use App\Http\Requests\StoreSituationRequest;
 use App\Http\Requests\UpdateSituationRequest;
-use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Repositories\situationRepository;
+use App\Repositories\SituationValidateRepository;
 
 class SituationController extends Controller
 {
     
-    public function __construct(Situation $situation, Student $student) {
+    public function __construct(Situation $situation) {
         $this->situation = $situation;
-        $this->student = $student;
         $this->msgError = "The searched register is not in the database. Check the inserted data.";
     }
     /**
@@ -62,25 +61,18 @@ class SituationController extends Controller
      */
     public function store(StoreSituationRequest $request)
     {
-
-        $request->validate($this->situation->rules());
+        $situationValidate = new SituationValidateRepository($this->situation);
         
-        $student_id = $request->student_id;
-        $student = $this->student->find($student_id);
-
-        $name = $student->name;
-        $first_score = $student->first_score;
-        $second_score = $student->second_score;
-        $total_score = $first_score + $second_score;
+        $mrules = $this->situation->rules();
+        $situationValidate->validateData($request, $mrules);
         
-        $status = 'R';
-
-        if($total_score >= 60) {
-            $status = 'A';
-        }
+        $student = $this->situation->findStudent($request);
+        $name = Situation::settingName($student);
+        $total_score = Situation::settingTotalScore($student);
+        $status = Situation::settingStatus($total_score);
 
         $situation = $this->situation->create([
-            'student_id' => $student_id,
+            'student_id' => $request->student_id,
             'total_score' => $total_score,
             'status' => $status,
             'name' => $name
@@ -132,7 +124,10 @@ class SituationController extends Controller
             return response()->json(['error' => 'Unable to update data. '.$this->msgError], 404);
         }
 
-        $request->validate($situation->rules());
+        $situationValidate = new SituationValidateRepository($this->situation);
+        $mrules = $situation->rules();
+        
+        $situationValidate->validateData($request, $mrules);
         
         $situation->fill($request->all());
         $situation->total_score = (double) $situation->total_score;
@@ -155,7 +150,11 @@ class SituationController extends Controller
             return response()->json(['error' => 'Unable to delete data. '.$this->msgError], 404);
         }
 
-        $situation->delete();
+        if($situation->delete()) {
+            $student_id = $situation->student_id;
+            $student = $this->student->find($student_id);
+            $student->delete();
+        }
         return response()->json(['msg' => 'The status referred to the student '.$situation->student->name. ' has been successfully deleted in the database'], 200);
     }
 }

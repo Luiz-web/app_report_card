@@ -8,6 +8,7 @@ use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use Illuminate\Http\Request;
 use App\Repositories\StudentRepository;
+use App\Repositories\StudentValidateRepository;
 
 class StudentController extends Controller
 {
@@ -65,7 +66,10 @@ class StudentController extends Controller
      */
     public function store(StoreStudentRequest $request)
     {
-        $request->validate($this->student->rules());
+        $studentValidate = new StudentValidateRepository($this->student);
+        $mrules = $this->student->rules();
+        
+        $studentValidate->validateData($request, $mrules);
         
         $student = $this->student->create([
             'school_year_id' => $request->school_year_id,
@@ -123,21 +127,10 @@ class StudentController extends Controller
             return response()->json(['error' => 'Unable to update data. '.$this->msgError, 404]);
         }
 
-        if($request->method() === 'PATCH') {
-
-            $dinamicRules = array();
-
-            foreach($student->rules as $input => $rule) {
-
-                if(array_key_exists($input, $request->all())) {
-                    $dinamicRules[$input] = $rule;
-                }
-            }
-
-            $request->validate($dinamicRules);
-        } else {
-            $request->validate($student->rules());
-        }
+        $studentValidate = new StudentValidateRepository($this->student);
+        $mrules = $student->rules();
+        
+        $studentValidate->validateData($request, $mrules);
 
         $student->fill($request->all());
         $student->save();

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Approved;
-use App\Models\Situation;
 use App\Http\Requests\StoreApprovedRequest;
 use App\Http\Requests\UpdateApprovedRequest;
 
@@ -40,30 +39,14 @@ class ApprovedController extends Controller
      */
     public function store()
     {
-        $approved_id = [];
-        $situations_id = [];
-        $new_registers = [];
-
-        $situations = Situation::where('status', 'A')->orderBy('id')->get();
-        foreach($situations as $situation) {
-            $situations_id[] = $situation->id;
-        }
-
-        $approveds = Approved::all();
-        foreach($approveds as $approved) {
-            $approved_id[] = $approved->situation_id;
-        } 
-
-        $difference = array_diff($situations_id, $approved_id);
-        
-        $situations = Situation::with('students')->where('id', $difference)->get();
-        foreach($situations as $situation) {
-            $new_registers[] = $situation;
-        }
-
+        $new_registers = Approved::gettingnewRegisters();
+     
+        //If all the approved students are already on the approved table(when the new_registers is empty), the method will finish with the message.
         if(empty($new_registers)) {
             return response()->json(['msg' => 'The Approved table is already synchronized  with the situations table']);
+        //The data will be filled dynamically
         } else {
+            $new_students = [];
             foreach($new_registers as $new_register) {
                 $approved = $this->approved->create([
                     'name' => $new_register->name,
@@ -71,10 +54,11 @@ class ApprovedController extends Controller
                     'school_year' =>  $new_register->students->schoolYear->school_year,
                     'professional_area' => $new_register->students->professionalFocus->professional_area,
                 ]);
+                $new_students[] = $approved;
             }
         }
 
-        return response()->json($approved, 201);
+        return response()->json($new_students, 201);
     }
 
     /**

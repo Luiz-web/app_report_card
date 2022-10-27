@@ -12,11 +12,47 @@ class Situation extends Model
     use HasFactory;
     protected $fillable = ['student_id', 'total_score', 'status', 'name'];
 
+    public static function retrievingStudents() {
+        $students_id = [];
+        $students = Student::with('situation')->get();
+        foreach($students as $student) {
+            $students_id[] = $student->id;
+        }
+
+        return $students_id;
+    }
+
+    public static function retrievingSituations() {
+        $array_situations = [];
+        $situations = Situation::with('students')->get();
+        foreach($situations as $situation) {
+            $array_situations[] = $situation->student_id;
+        }
+
+        return $array_situations;
+    }
+
+    public function gettingNewStudents() {
+        $students_id = Situation::retrievingStudents();
+        $array_situations = Situation::retrievingSituations();
+
+        $difference = array_diff($students_id, $array_situations);
+
+        $new_students = [];
+        $students = Student::with('situation')->whereIn('id', $difference)->get();
+        foreach($students as $student) {
+            $new_students[] = $student;
+        }
+
+        return $new_students;
+    } 
+
     //finding the student through the student_id inserted on request
-    public function findStudent($request) {
-        $student_id = $request->student_id;
+    public static function findStudentId($student) {
+        $student_id = $student->id;
         $student = Student::find($student_id);
-        return $student;
+        $student_id = $student->id;
+        return $student_id;
     }
 
     public static function settingName($student) {
@@ -44,7 +80,7 @@ class Situation extends Model
 
     public function rules() {
         return [
-            'student_id' => 'required|unique:situations,student_id,'.$this->id.'|integer',
+            'student_id' => 'unique:situations,student_id,'.$this->id.'|integer',
         ];
     }
     

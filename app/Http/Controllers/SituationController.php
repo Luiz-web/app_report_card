@@ -26,7 +26,7 @@ class SituationController extends Controller
         $situationRepository = new SituationRepository($this->situation);
 
         if($request->has('relational_attrs')) {
-            $relational_attrs = 'student:id,'.$request->relational_attrs;
+            $relational_attrs = 'students:id,'.$request->relational_attrs;
             $situationRepository->selectRelationalAttributes($relational_attrs);
         }
 
@@ -65,20 +65,32 @@ class SituationController extends Controller
         
         $mrules = $this->situation->rules();
         $situationValidate->validateData($request, $mrules);
-        
-        $student = $this->situation->findStudent($request);
-        $name = Situation::settingName($student);
-        $total_score = Situation::settingTotalScore($student);
-        $status = Situation::settingStatus($total_score);
 
-        $situation = $this->situation->create([
-            'student_id' => $request->student_id,
-            'total_score' => $total_score,
-            'status' => $status,
-            'name' => $name
-        ]);
+        $new_students = $this->situation->gettingNewStudents();
+        $new_situations = [];
 
-        return response()->json($situation, 200);
+        // If all students have a situation, the method will not create any register
+        if(empty($new_students)) {
+            return response()->json(['msg' => 'All students already have a situation']);
+        } else {
+            foreach($new_students as $student) {
+                $student_id = Situation::findStudentId($student);
+                $name = Situation::settingName($student);
+                $total_score = Situation::settingTotalScore($student);
+                $status = Situation::settingStatus($total_score);
+            
+                $situation = $this->situation->create([
+                    'student_id' => $student_id,
+                    'total_score' => $total_score,
+                    'status' => $status,
+                    'name' => $name
+                ]);
+    
+                $new_situations[] = $situation;
+            }
+    
+            return response()->json($new_situations, 200);
+        }
     }
 
     /**
